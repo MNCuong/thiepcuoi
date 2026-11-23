@@ -530,15 +530,92 @@ footer p{color:#CFC9BA;font-family:var(--serif);font-style:italic;font-size:20px
     btn.disabled = false;
   });
 
-  // Music
-  const audio = $("#bgm"), mBtn = $("#musicBtn");
-  if (C.music) {
-    audio.src = C.music; mBtn.hidden = false;
-    const sync = () => mBtn.classList.toggle("playing", !audio.paused);
-    audio.addEventListener("play", sync); audio.addEventListener("pause", sync);
-    audio.addEventListener("error", () => mBtn.hidden = true);
-    mBtn.addEventListener("click", () => audio.paused ? audio.play().catch(()=>{}) : audio.pause());
+  // Music: phát file mp3 nếu có; không có (hoặc lỗi) thì tự chơi Canon in D bằng Web Audio
+  const createCanon = () => {
+    // Pachelbel – Canon in D (tác phẩm public domain), phối kiểu hộp nhạc
+    const BEAT = 0.75, EIGHTH = BEAT / 2;
+    const bass = [38, 45, 47, 42, 43, 38, 43, 45];                        // D A Bm F#m G D G A
+    const chords = [[62,66,69],[57,61,64],[59,62,66],[54,57,61],[55,59,62],[62,66,69],[55,59,62],[57,61,64]];
+    const melodies = [[78,76,74,73,71,69,71,73], [74,73,71,69,67,66,67,64]];
+    const hz = m => 440 * Math.pow(2, (m - 69) / 12);
+    let ctx, master, timer = null, next = 0, step = 0;
+
+    const init = () => {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return false;
+      ctx = new AC();
+      master = ctx.createGain(); master.gain.value = 0.0001;
+      const delay = ctx.createDelay(), fb = ctx.createGain(), lp = ctx.createBiquadFilter(), wet = ctx.createGain();
+      delay.delayTime.value = 0.3; fb.gain.value = 0.32; lp.type = "lowpass"; lp.frequency.value = 2200; wet.gain.value = 0.3;
+      master.connect(ctx.destination);
+      master.connect(delay); delay.connect(lp); lp.connect(fb); fb.connect(delay); lp.connect(wet); wet.connect(ctx.destination);
+      return true;
+    };
+    const note = (m, t, dur, vol) => {
+      const o = ctx.createOscillator(), o2 = ctx.createOscillator(), g = ctx.createGain(), g2 = ctx.createGain();
+      o.type = "triangle"; o.frequency.value = hz(m);
+      o2.type = "sine"; o2.frequency.value = hz(m) * 2; g2.gain.value = 0.18;
+      o.connect(g); o2.connect(g2); g2.connect(g); g.connect(master);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(vol, t + 0.012);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.start(t); o2.start(t); o.stop(t + dur + 0.05); o2.stop(t + dur + 0.05);
+    };
+    const schedule = (s, t) => {
+      const c = Math.floor(s / 4) % 8, pos = s % 4, cycle = Math.floor(s / 32), ch = chords[c];
+      if (pos === 0) {
+        note(bass[c], t, 2.6, 0.2);
+        if (cycle > 0) note(melodies[(cycle - 1) % 2][c], t, 2.2, 0.13);
+      }
+      note([ch[0], ch[1], ch[2], ch[0] + 12][pos], t, 1.1, 0.06);
+    };
+    const tick = () => { while (next < ctx.currentTime + 0.3) { schedule(step++, next); next += EIGHTH; } };
+
+    return {
+      play() {
+        if (!ctx && !init()) return;
+        ctx.resume();
+        if (timer) return;
+        next = Math.max(next, ctx.currentTime + 0.05);
+        master.gain.cancelScheduledValues(ctx.currentTime);
+        master.gain.setValueAtTime(Math.max(master.gain.value, 0.0001), ctx.currentTime);
+        master.gain.exponentialRampToValueAtTime(0.6, ctx.currentTime + 2.5);
+        timer = setInterval(tick, 80); tick();
+      },
+      pause() { if (timer) { clearInterval(timer); timer = null; } if (ctx) ctx.suspend(); },
+      get state() { return ctx ? ctx.state : "none"; }
+    };
+  };
+
+  const audio = $("#bgm"), mBtn = $("#musicBtn"), synth = createCanon();
+  const fallback = C.musicFallback !== false;
+  let useFile = !!C.music, playing = false;
+  const fileFailed = () => {
+    if (!useFile) return; useFile = false;
+    if (!fallback) { playing = false; mBtn.hidden = true; return; }
+    if (playing) synth.play();
+  };
+  const music = {
+    play() {
+      playing = true; mBtn.classList.add("playing");
+      if (useFile) audio.play().catch(fileFailed);
+      else synth.play();
+    },
+    pause() { playing = false; mBtn.classList.remove("playing"); audio.pause(); synth.pause(); }
+  };
+  window.__music = { synth, get useFile() { return useFile; } };
+  if (useFile) {
+    audio.src = C.music;
+    audio.addEventListener("error", fileFailed);
   }
+  if (C.music || fallback) mBtn.hidden = false;
+  mBtn.addEventListener("click", () => playing ? music.pause() : music.play());
+  // Ẩn tab/khoá màn hình thì tạm dừng, quay lại thì phát tiếp
+  document.addEventListener("visibilitychange", () => {
+    if (!playing) return;
+    if (document.hidden) { audio.pause(); synth.pause(); }
+    else if (useFile) audio.play().catch(() => {}); else synth.play();
+  });
 
   // Petals
   const petals = n => { if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -554,7 +631,7 @@ footer p{color:#CFC9BA;font-family:var(--serif);font-style:italic;font-size:20px
   $("#cover").addEventListener("click", () => {
     if ($("#cover").classList.contains("hide")) return;
     $("#cover").classList.add("hide"); document.body.classList.remove("locked");
-    if (C.music) audio.play().catch(()=>{});
+    if (!mBtn.hidden) music.play();
     petals(24);
   });
 

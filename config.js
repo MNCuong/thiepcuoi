@@ -26,18 +26,18 @@ window.WEDDING = {
       name: "Tiệc Mừng",
       time: "17:00", date: "2026-12-19", lunar: "Ngày 20 tháng 11 năm Bính Ngọ",
       place: "Tại tư gia nhà gái", address: "Thôn Bạch Câu, xã Nga Sơn, tỉnh Thanh Hóa",
-      map: "https://maps.google.com/?q=Hoan+Kiem+Lake"
+      map: "https://maps.google.com/?q=19.969787209840163, 105.97399960413291"
     },
     {
       name: "Lễ Thành Hôn",
       time: "10:00", date: "2026-12-20", lunar: "Ngày 21 tháng 11 năm Bính Ngọ",
       place: "Tại tư gia nhà trai", address: "SN114 thôn Yên Khoái, xã Nga Sơn, tỉnh Thanh Hóa",
-      map: "https://maps.google.com/?q=Hoan+Kiem+Lake"
+      map: "https://maps.google.com/?q=20.01379841033638, 105.97346378264757"
     }
   ],
 
   // Nhúng bản đồ: Google Maps → Chia sẻ → Nhúng bản đồ → copy link trong src="..."
-  mapEmbed: "https://www.google.com/maps?q=Hoan+Kiem+Lake,Hanoi&output=embed",
+  mapEmbed: "https://www.google.com/maps?q=20.01379841033638, 105.97346378264757&output=embed",
 
   timeline: [
     { time: "17:00", text: "Đón khách & chụp ảnh" },
@@ -55,8 +55,10 @@ window.WEDDING = {
   heroImage: "images/hero.jpg",
   gallery: ["images/1.jpg", "images/2.jpg", "images/3.jpg", "images/4.jpg", "images/5.jpg", "images/6.jpg"],
 
-  // Nhạc nền (mp3 trong thư mục music/). Để "" nếu không dùng.
+  // Nhạc nền: bỏ file mp3 vào thư mục music/. Nếu chưa có file (hoặc file lỗi),
+  // thiệp tự chơi bản Canon in D kiểu hộp nhạc. musicFallback: false để tắt hẳn nhạc khi không có file.
   music: "music/song.mp3",
+  musicFallback: true,
 
   // Mừng cưới — QR sinh tự động qua VietQR (mã ngân hàng: VCB, TCB, MB, ACB, BIDV, VPB...)
   gifts: [
