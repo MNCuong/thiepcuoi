@@ -1,7 +1,7 @@
-# Thiệp cưới online — HTML tĩnh, deploy GitHub Pages
+﻿# Thiệp cưới online — HTML tĩnh, deploy GitHub Pages
 
 ```
-wedding/
+thiep-cuoi/
 ├── index.html          # giao diện (không cần sửa)
 ├── config.js           # ← SỬA NỘI DUNG Ở ĐÂY
 ├── images/             # hero.jpg, 1.jpg … 6.jpg
@@ -16,7 +16,7 @@ Gửi link cá nhân hoá cho từng khách: `https://<user>.github.io/<repo>/?t
 
 ## 2. Deploy GitHub Pages
 1. Tạo repo public trên GitHub, ví dụ `wedding`.
-2. Upload toàn bộ nội dung thư mục `wedding/` (kéo thả trên web GitHub, hoặc):
+2. Upload toàn bộ file (`index.html` phải nằm ở gốc repo) (kéo thả trên web GitHub, hoặc):
    ```bash
    git init && git add . && git commit -m "Thiệp cưới"
    git branch -M main
