@@ -9,8 +9,8 @@ window.WEDDING = {
   weddingDate: "2026-12-20T10:00:00+07:00",
 
   families: {
-    groom: { label: "Nhà Trai", father: "Ông Trần Văn A", mother: "Bà Nguyễn Thị B", address: "Phường X, Hà Nội" },
-    bride: { label: "Nhà Gái", father: "Ông Lê Văn C", mother: "Bà Phạm Thị D", address: "Phường Y, Hà Nội" }
+    groom: { label: "Nhà Trai", father: "Ông Mai Ngọc Trược", mother: "Bà Mai Thị Thúy", address: "SN114 thôn Yên Khoái, xã Nga Sơn, tỉnh Thanh Hóa" },
+    bride: { label: "Nhà Gái", father: "Ông Nguyễn Văn Tình", mother: "Bà Nguyễn Thị Thúy", address: "Thôn Bạch Câu, xã Nga Sơn, tỉnh Thanh Hóa" }
   },
 
   invitation: "Trân trọng kính mời tới dự buổi tiệc chung vui cùng gia đình chúng tôi",
@@ -25,13 +25,13 @@ window.WEDDING = {
     {
       name: "Tiệc Mừng",
       time: "17:00", date: "2026-12-19", lunar: "Ngày 20 tháng 11 năm Bính Ngọ",
-      place: "Tại tư gia nhà gái", address: "Số 1, Phường Y, Hà Nội",
+      place: "Tại tư gia nhà gái", address: "Thôn Bạch Câu, xã Nga Sơn, tỉnh Thanh Hóa",
       map: "https://maps.google.com/?q=Hoan+Kiem+Lake"
     },
     {
       name: "Lễ Thành Hôn",
       time: "10:00", date: "2026-12-20", lunar: "Ngày 21 tháng 11 năm Bính Ngọ",
-      place: "Tại tư gia nhà trai", address: "Số 2, Phường X, Hà Nội",
+      place: "Tại tư gia nhà trai", address: "SN114 thôn Yên Khoái, xã Nga Sơn, tỉnh Thanh Hóa",
       map: "https://maps.google.com/?q=Hoan+Kiem+Lake"
     }
   ],
