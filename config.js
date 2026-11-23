@@ -26,18 +26,18 @@ window.WEDDING = {
       name: "Tiệc Mừng",
       time: "17:00", date: "2026-12-19", lunar: "Ngày 20 tháng 11 năm Bính Ngọ",
       place: "Tại tư gia nhà gái", address: "Thôn Bạch Câu, xã Nga Sơn, tỉnh Thanh Hóa",
-      map: "https://maps.google.com/?q=19.969787209840163, 105.97399960413291"
+      map: "https://maps.google.com/?q=19.969787209840163,105.97399960413291"
     },
     {
       name: "Lễ Thành Hôn",
       time: "10:00", date: "2026-12-20", lunar: "Ngày 21 tháng 11 năm Bính Ngọ",
       place: "Tại tư gia nhà trai", address: "SN114 thôn Yên Khoái, xã Nga Sơn, tỉnh Thanh Hóa",
-      map: "https://maps.google.com/?q=20.01379841033638, 105.97346378264757"
+      map: "https://maps.google.com/?q=20.01379841033638,105.97346378264757"
     }
   ],
 
   // Nhúng bản đồ: Google Maps → Chia sẻ → Nhúng bản đồ → copy link trong src="..."
-  mapEmbed: "https://www.google.com/maps?q=20.01379841033638, 105.97346378264757&output=embed",
+  mapEmbed: "https://www.google.com/maps?q=20.01379841033638,105.97346378264757&output=embed",
 
   timeline: [
     { time: "17:00", text: "Đón khách & chụp ảnh" },
@@ -59,6 +59,8 @@ window.WEDDING = {
   // thiệp tự chơi bản Canon in D kiểu hộp nhạc. musicFallback: false để tắt hẳn nhạc khi không có file.
   music: "music/song.mp3",
   musicFallback: true,
+  // Bản nhạc tự chơi: "bridal" = Here Comes the Bride (Wagner), "canon" = Canon in D (Pachelbel)
+  musicTune: "bridal",
 
   // Mừng cưới — QR sinh tự động qua VietQR (mã ngân hàng: VCB, TCB, MB, ACB, BIDV, VPB...)
   gifts: [

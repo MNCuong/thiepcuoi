@@ -530,15 +530,48 @@ footer p{color:#CFC9BA;font-family:var(--serif);font-style:italic;font-size:20px
     btn.disabled = false;
   });
 
-  // Music: phát file mp3 nếu có; không có (hoặc lỗi) thì tự chơi Canon in D bằng Web Audio
-  const createCanon = () => {
-    // Pachelbel – Canon in D (tác phẩm public domain), phối kiểu hộp nhạc
-    const BEAT = 0.75, EIGHTH = BEAT / 2;
-    const bass = [38, 45, 47, 42, 43, 38, 43, 45];                        // D A Bm F#m G D G A
-    const chords = [[62,66,69],[57,61,64],[59,62,66],[54,57,61],[55,59,62],[62,66,69],[55,59,62],[57,61,64]];
-    const melodies = [[78,76,74,73,71,69,71,73], [74,73,71,69,67,66,67,64]];
+  // Music: phát file mp3 nếu có; không có (hoặc lỗi) thì tự chơi nhạc cưới bằng Web Audio
+  // Cả hai bản đều là tác phẩm cổ điển đã hết bản quyền (public domain).
+  const TUNES = {
+    // Wagner – Bridal Chorus ("Here Comes the Bride"), giọng Đô trưởng, tính theo phách
+    bridal: (() => {
+      const BEAT = 0.72, ev = [];
+      const N = { B4: 71, C5: 72, D5: 74, E5: 76, F5: 77, G4: 67, G5: 79 };
+      const CH = { C: [48, 60, 64, 67], F: [41, 57, 60, 65], G: [43, 55, 59, 62] };
+      // [nốt, số phách, hợp âm đệm (nếu có)]
+      const phraseA = [["G4",1],["C5",1.5,"C"],["C5",.5],["C5",2],["G4",1],["D5",1.5,"G"],["B4",.5],["C5",2,"C"]];
+      const tailA   = [["G4",1],["C5",1.5,"C"],["F5",.5,"F"],["F5",2],["E5",1,"C"],["D5",1.5,"G"],["C5",.5],["B4",1.5],["C5",.5],["D5",2,"G"]];
+      const tailB   = [["G4",1],["C5",1.5,"C"],["E5",.5],["G5",2],["F5",1,"F"],["E5",1.5,"C"],["D5",.5],["C5",1.5,"G"],["B4",.5],["C5",3,"C"]];
+      let beat = 0;
+      for (const [n, d, c] of [...phraseA, ...tailA, ...phraseA, ...tailB]) {
+        const t = beat * BEAT;
+        ev.push({ t, m: N[n], dur: Math.max(d * BEAT * 1.4, 0.9), vol: 0.17 });
+        if (c) CH[c].forEach((m, i) => ev.push({ t: t + i * 0.06, m, dur: i ? 2.2 : 2.8, vol: i ? 0.045 : 0.16 }));
+        beat += d;
+      }
+      return { ev, length: (beat + 3) * BEAT };
+    })(),
+    // Pachelbel – Canon in D, kiểu hộp nhạc: 1 vòng chỉ đệm, rồi 2 vòng có giai điệu
+    canon: (() => {
+      const E = 0.375, ev = [];
+      const bass = [38, 45, 47, 42, 43, 38, 43, 45];
+      const chords = [[62,66,69],[57,61,64],[59,62,66],[54,57,61],[55,59,62],[62,66,69],[55,59,62],[57,61,64]];
+      const mel = [[78,76,74,73,71,69,71,73], [74,73,71,69,67,66,67,64]];
+      for (let s = 0; s < 96; s++) {
+        const c = Math.floor(s / 4) % 8, pos = s % 4, cycle = Math.floor(s / 32), ch = chords[c], t = s * E;
+        if (pos === 0) {
+          ev.push({ t, m: bass[c], dur: 2.6, vol: 0.2 });
+          if (cycle > 0) ev.push({ t, m: mel[cycle - 1][c], dur: 2.2, vol: 0.13 });
+        }
+        ev.push({ t, m: [ch[0], ch[1], ch[2], ch[0] + 12][pos], dur: 1.1, vol: 0.06 });
+      }
+      return { ev, length: 96 * E };
+    })()
+  };
+
+  const createSynth = tune => {
     const hz = m => 440 * Math.pow(2, (m - 69) / 12);
-    let ctx, master, timer = null, next = 0, step = 0;
+    let ctx, master, timer = null, loopStart = 0, idx = 0;
 
     const init = () => {
       const AC = window.AudioContext || window.webkitAudioContext;
@@ -549,6 +582,7 @@ footer p{color:#CFC9BA;font-family:var(--serif);font-style:italic;font-size:20px
       delay.delayTime.value = 0.3; fb.gain.value = 0.32; lp.type = "lowpass"; lp.frequency.value = 2200; wet.gain.value = 0.3;
       master.connect(ctx.destination);
       master.connect(delay); delay.connect(lp); lp.connect(fb); fb.connect(delay); lp.connect(wet); wet.connect(ctx.destination);
+      loopStart = ctx.currentTime + 0.1;
       return true;
     };
     const note = (m, t, dur, vol) => {
@@ -561,22 +595,21 @@ footer p{color:#CFC9BA;font-family:var(--serif);font-style:italic;font-size:20px
       g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
       o.start(t); o2.start(t); o.stop(t + dur + 0.05); o2.stop(t + dur + 0.05);
     };
-    const schedule = (s, t) => {
-      const c = Math.floor(s / 4) % 8, pos = s % 4, cycle = Math.floor(s / 32), ch = chords[c];
-      if (pos === 0) {
-        note(bass[c], t, 2.6, 0.2);
-        if (cycle > 0) note(melodies[(cycle - 1) % 2][c], t, 2.2, 0.13);
+    const tick = () => {
+      for (;;) {
+        if (idx >= tune.ev.length) { idx = 0; loopStart += tune.length; }
+        const e = tune.ev[idx], t = loopStart + e.t;
+        if (t > ctx.currentTime + 0.3) break;
+        if (t >= ctx.currentTime - 0.05) note(e.m, t, e.dur, e.vol);
+        idx++;
       }
-      note([ch[0], ch[1], ch[2], ch[0] + 12][pos], t, 1.1, 0.06);
     };
-    const tick = () => { while (next < ctx.currentTime + 0.3) { schedule(step++, next); next += EIGHTH; } };
 
     return {
       play() {
         if (!ctx && !init()) return;
         ctx.resume();
         if (timer) return;
-        next = Math.max(next, ctx.currentTime + 0.05);
         master.gain.cancelScheduledValues(ctx.currentTime);
         master.gain.setValueAtTime(Math.max(master.gain.value, 0.0001), ctx.currentTime);
         master.gain.exponentialRampToValueAtTime(0.6, ctx.currentTime + 2.5);
@@ -587,7 +620,7 @@ footer p{color:#CFC9BA;font-family:var(--serif);font-style:italic;font-size:20px
     };
   };
 
-  const audio = $("#bgm"), mBtn = $("#musicBtn"), synth = createCanon();
+  const audio = $("#bgm"), mBtn = $("#musicBtn"), synth = createSynth(TUNES[C.musicTune] || TUNES.bridal);
   const fallback = C.musicFallback !== false;
   let useFile = !!C.music, playing = false;
   const fileFailed = () => {
