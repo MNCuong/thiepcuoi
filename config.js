@@ -55,9 +55,11 @@ window.WEDDING = {
   heroImage: "images/hero.jpg",
   gallery: ["images/1.jpg", "images/2.jpg", "images/3.jpg", "images/4.jpg", "images/5.jpg", "images/6.jpg"],
 
-  // Nhạc nền: bỏ file mp3 vào thư mục music/. Nếu chưa có file (hoặc file lỗi),
-  // thiệp tự chơi bản Canon in D kiểu hộp nhạc. musicFallback: false để tắt hẳn nhạc khi không có file.
-  music: "music/song.mp3",
+  // Nhạc nền, chọn 1 trong 2:
+  //  - Link YouTube (vd "https://www.youtube.com/watch?v=..."): hiện mục "Bài hát của chúng mình" có video, mở thiệp là phát
+  //  - File mp3 trong thư mục music/ (vd "music/song.mp3")
+  // Nếu link/file lỗi, thiệp tự chơi bản hộp nhạc bên dưới. musicFallback: false để tắt hẳn khi lỗi.
+  music: "music/Ngày Đầu Tiên.mp3",
   musicFallback: true,
   // Bản nhạc tự chơi: "bridal" = Here Comes the Bride (Wagner), "canon" = Canon in D (Pachelbel)
   musicTune: "bridal",
