@@ -3,34 +3,34 @@
 // =====================================================================
 window.WEDDING = {
   groom: { short: "Ngọc Cường", full: "Mai Ngọc Cường" },
-  bride: { short: "Thùy Giang", full: "Nguyễn Thùy Giang" },
+  bride: { short: "xxxxxxxxx", full: "xxxxxxxxxxxxxxx" },
 
   // Thời điểm đếm ngược tới (giờ Việt Nam, +07:00)
-  weddingDate: "2026-12-20T10:00:00+07:00",
+  weddingDate: "2030-12-20T10:00:00+07:00",
 
   families: {
     groom: { label: "Nhà Trai", father: "Ông Mai Ngọc Trược", mother: "Bà Mai Thị Thúy", address: "SN114 thôn Yên Khoái, xã Nga Sơn, tỉnh Thanh Hóa" },
-    bride: { label: "Nhà Gái", father: "Ông Nguyễn Văn Tình", mother: "Bà Nguyễn Thị Thúy", address: "Thôn Bạch Câu, xã Nga Sơn, tỉnh Thanh Hóa" }
+    bride: { label: "Nhà Gái", father: "Ông xxxxxxxxxxxxxx", mother: "Bà xxxxxxxxxxxxx", address: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" }
   },
 
   invitation: "Trân trọng kính mời tới dự buổi tiệc chung vui cùng gia đình chúng tôi",
 
   story: [
-    { year: "2019", title: "Lần đầu gặp gỡ", text: "Chúng mình gặp nhau trong một buổi làm thêm thời sinh viên — một cái chạm mắt, một lời chào ngập ngừng." },
-    { year: "2022", title: "Cùng nhau trưởng thành", text: "Qua những ngày bận rộn, những chuyến đi xa, chúng mình học cách lắng nghe và nắm tay nhau thật chặt." },
-    { year: "2026", title: "Về chung một nhà", text: "Sau 7 năm, chúng mình quyết định viết tiếp câu chuyện này — cùng nhau, trọn đời." }
+    { year: "xxxx", title: "Lần đầu gặp gỡ", text: "Chúng mình gặp nhau trong một buổi làm thêm thời sinh viên — một cái chạm mắt, một lời chào ngập ngừng." },
+    { year: "xxxx", title: "Cùng nhau trưởng thành", text: "Qua những ngày bận rộn, những chuyến đi xa, chúng mình học cách lắng nghe và nắm tay nhau thật chặt." },
+    { year: "xxxx", title: "Về chung một nhà", text: "Sau 7 năm, chúng mình quyết định viết tiếp câu chuyện này — cùng nhau, trọn đời." }
   ],
 
   events: [
     {
       name: "Tiệc Mừng",
-      time: "17:00", date: "2026-12-19", lunar: "Ngày 20 tháng 11 năm Bính Ngọ",
-      place: "Tại tư gia nhà gái", address: "Thôn Bạch Câu, xã Nga Sơn, tỉnh Thanh Hóa",
+      time: "17:00", date: "xxxx-12-19", lunar: "Ngày 20 tháng xx năm xxxx",
+      place: "Tại tư gia nhà gái", address: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
       map: "https://maps.google.com/?q=19.969787209840163,105.97399960413291"
     },
     {
       name: "Lễ Thành Hôn",
-      time: "10:00", date: "2026-12-20", lunar: "Ngày 21 tháng 11 năm Bính Ngọ",
+      time: "10:00", date: "xxxx-12-20", lunar: "Ngày 21 tháng xx năm xxxx",
       place: "Tại tư gia nhà trai", address: "SN114 thôn Yên Khoái, xã Nga Sơn, tỉnh Thanh Hóa",
       map: "https://maps.google.com/?q=20.01379841033638,105.97346378264757"
     }
